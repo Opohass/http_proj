@@ -3,7 +3,8 @@ import cv2
 
 def getImageAsArray(path):
 
-    img = cv2.imread(path)
+    # img = cv2.imread(path)
+    img = cv2.imdecode(path, cv2.IMREAD_UNCHANGED)
 
     height,width=img.shape[:2]
     if height!=28 or width!=28: #convet the image to 28X28
@@ -17,4 +18,4 @@ def getImageAsArray(path):
 
     return img_gray.reshape(img_gray.shape[0]*img_gray.shape[1])
 
-getImageAsArray('./unitTest/imgTst/img2.png')
+# getImageAsArray('./unitTest/imgTst/img2.png')
