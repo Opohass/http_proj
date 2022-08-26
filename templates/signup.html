@@ -8,8 +8,8 @@
 
             </div>
 
-            <div name="login">
-                <form action = "http://127.0.0.1:5000/" method = "POST" enctype = "multipart/form-data">
+            <div name="signup">
+                <form action = "http://127.0.0.1:5000/signup" method = "POST" enctype = "multipart/form-data">
                     <label for="usermane"><b>usermane</b></label>
                     <input type="text" placeholder="Enter usermane" name="usermane" required>
                 
@@ -21,7 +21,8 @@
                     
                     <button type="submit">sign up</button>
                 </form>
-            </div>            
+            </div>
+            <p name="ERROR" style="font-size: 28px; margin-top: 5%;">{{ ERROR }}</p>            
         </center>
     </body>
 </html>
