@@ -26,7 +26,7 @@ class Tree():
     
     def build_kd_tree(self, data_x, data_y, node, depth, max_depth):
         
-        if depth < MAX_DEPTH:
+        if depth < max_depth:
             if len(data_x) == 1:
                 node.median = None
                 node.left_child = None
@@ -38,7 +38,7 @@ class Tree():
                 return node
             elif len(data_x) == 0:
                 return None
-        elif depth == MAX_DEPTH:
+        elif depth == max_depth:
             node.median = None
             node.left_child = None
             node.right_child = None
