@@ -2,8 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.neighbors import KNeighborsClassifier
 # from MinMaxScale import MinMaxScale
-
-KNeighborsClassifier()
+MAX_DEPTH = 2500
 
 class Node():
     def __init__(self):
@@ -19,24 +18,15 @@ class Node():
         
 
 class Tree():
-    def __init__(self, data_x, data_y, max_depth=None):
+    def __init__(self, data_x, data_y, max_depth=MAX_DEPTH):
         self.data_x = data_x
         self.data_y = data_y
         self.max_depth = max_depth
-        self.tree = self.build_kd_tree(self.data_x, self.data_y, Node(), 1, max_depth)
+        self.tree = self.build_kd_tree(self.data_x, self.data_y, Node(), 1, self.max_depth)
     
     def build_kd_tree(self, data_x, data_y, node, depth, max_depth):
-        if max_depth != None:
-            if depth >= max_depth:
-                node.median = None
-                node.left_child = None
-                node.right_child = None
-                node.depth = depth
-                node.attr = None
-                node.data_x = data_x
-                node.data_y = data_y
-                return node
-        else:
+        
+        if depth < MAX_DEPTH:
             if len(data_x) == 1:
                 node.median = None
                 node.left_child = None
@@ -48,8 +38,23 @@ class Tree():
                 return node
             elif len(data_x) == 0:
                 return None
+        elif depth == MAX_DEPTH:
+            node.median = None
+            node.left_child = None
+            node.right_child = None
+            node.depth = depth
+            node.attr = None
+            node.data_x = data_x
+            node.data_y = data_y
+            return node
+        else:
+            raise RecursionError(f"Python Only Allowes Recursion depth of {MAX_DEPTH}")
             
-        median = np.median(data_x[:,depth % len(data_x[0,:])])
+        median = np.median(data_x[:,depth % len(data_x[0,:])], axis=0)
+        if median == 1.0:
+            median = 0.99999
+        elif median == 0.0:
+            median == 0.00001
         node.attr = depth % len(data_x[0,:])
         node.median = median
         node.depth = depth
@@ -62,7 +67,7 @@ class Tree():
         return node
 
 class KnnClassifier:
-    def __init__(self, k_neighbors=3, depth=None):
+    def __init__(self, k_neighbors=3, depth=MAX_DEPTH):
         self.train_set = None
         self.k_neighbors = k_neighbors
         self.depth = depth
@@ -71,29 +76,51 @@ class KnnClassifier:
     def fit(self, X, y):
         self.tree = Tree(X, y, self.depth)
     
-    def predict(self, X, node=None):
+    def predict(self, X):
         prediction = []
-        KnnClassifier.get_prediction(X, self.tree.tree, self.k_neighbors, prediction)
+        for i in np.arange(len(X)):
+            x_pred = []
+            x_pred = KnnClassifier.get_prediction(X[i], self.tree.tree, self.k_neighbors, x_pred)
+            prediction.append(KnnClassifier.get_final_answer(x_pred))
         return prediction
         
     @staticmethod
-    def get_prediction(X, node, k_neighbors, prediction):
-        for i in np.arange(len(X)):
-            x_pred = []
-            if len(x_pred) == k_neighbors:
-                prediction.append(KnnClassifier.get_final_answer(x_pred))
-                continue
-            if node.data_x == None:
-                if X[i, node.attr] > node.median:
-                    x_pred.append(*(KnnClassifier.get_prediction([X[i]], node.right_child, k_neighbors, prediction)))
+    def get_prediction(X, node, k_neighbors, x_pred):
+            if len(x_pred) == k_neighbors or node == None:
+                return x_pred
+            if type(node.data_x) == type(None):
+                if X[node.attr] >= node.median:
+                    single_pred = KnnClassifier.get_prediction(X, node.right_child, k_neighbors, x_pred)
+                    if single_pred != None:
+                        x_pred += single_pred
                     if len(x_pred) == k_neighbors:
-                        prediction.append(KnnClassifier.get_final_answer(x_pred))
-                        continue
+                        return x_pred
                     else:
-                        x_pred.append(*(KnnClassifier.get_prediction([X[i]], node.left_child, k_neighbors, prediction)))
+                        single_pred = KnnClassifier.get_prediction(X, node.left_child, k_neighbors, x_pred)
+                        if single_pred != None:
+                            x_pred += single_pred
                         if len(x_pred) == k_neighbors:
-                            prediction.append(KnnClassifier.get_final_answer(x_pred))
-                            continue
+                            return x_pred
+                else:
+                    single_pred = KnnClassifier.get_prediction(X, node.right_child, k_neighbors, x_pred)
+                    if single_pred != None:
+                        x_pred += single_pred
+                    if len(x_pred) == k_neighbors:
+                        return x_pred
+                    else:
+                        single_pred = KnnClassifier.get_prediction(X, node.right_child, k_neighbors, x_pred)
+                        if single_pred != None:
+                            x_pred += single_pred
+                        if len(x_pred) == k_neighbors:
+                            return x_pred
+            else:
+                for data_p in node.data_y:
+                    if data_p != None:
+                        x_pred.append(data_p)
+                    if x_pred == k_neighbors:
+                        return x_pred
+                return x_pred
+                        
         
                     
     @staticmethod
@@ -104,5 +131,5 @@ class KnnClassifier:
                 preds_dict[i] += 1
             else:
                 preds_dict[i] = 1
-        return preds_dict.keys()[preds_dict.values().index(max(preds_dict.values()))]
+        return list(preds_dict.keys())[list(preds_dict.values()).index(max(preds_dict.values()))]
             
