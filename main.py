@@ -1,6 +1,7 @@
 import imgConv
 import numpy as np
 from flask import Flask, render_template, request
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 
 app =Flask(__name__)
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
@@ -11,7 +12,8 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 #index route
 @app.route("/")
 def index():
-    return render_template("index.html",answer="XX")
+    return render_template("login.html") #TODO: check if user is logged in
+    # return render_template("index.html",answer="XX")
 
 #when image upload route
 @app.route("/upload", methods = ['GET', 'POST'])
@@ -30,6 +32,12 @@ def uploaded():
             answer="please make sure to send an allowed file of png/jpg/jpeg"
 
         return render_template("index.html",answer=answer)
+
+@app.route("/signup", methods = ['GET', 'POST'])
+def signup():
+    # print("")
+    # print(request.form['uname'])
+    return render_template("signup.html")
 
 if __name__=="__main__":
     app.run(debug=True)

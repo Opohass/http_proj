@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <center>
+            <div name="intro">
+                <h1 style="font-size: 58px; margin-top: 5%;">please enter user name and password</h1>
+                <!-- <p style="font-size: 28px;">(we collect your data you see... thing aren't really free)</p> -->
+
+            </div>
+
+            <div name="login">
+                <form action = "http://127.0.0.1:5000/" method = "POST" enctype = "multipart/form-data">
+                    <label for="usermane"><b>usermane</b></label>
+                    <input type="text" placeholder="Enter usermane" name="usermane" required>
+                
+                    <label for="psw"><b>Password</b></label>
+                    <input type="password" placeholder="Enter Password" name="psw" required>
+                
+                    <label for="psw-repeat"><b>Repeat Password</b></label>
+                    <input type="password" placeholder="Repeat Password" name="psw-repeat" required>
+                    
+                    <button type="submit">sign up</button>
+                </form>
+            </div>            
+        </center>
+    </body>
+</html>
