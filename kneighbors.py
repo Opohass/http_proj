@@ -92,33 +92,33 @@ class KnnClassifier:
                 if X[node.attr] >= node.median:
                     single_pred = KnnClassifier.get_prediction(X, node.right_child, k_neighbors, x_pred)
                     if single_pred != None:
-                        x_pred += single_pred
+                        x_pred = single_pred
                     if len(x_pred) == k_neighbors:
                         return x_pred
                     else:
                         single_pred = KnnClassifier.get_prediction(X, node.left_child, k_neighbors, x_pred)
                         if single_pred != None:
-                            x_pred += single_pred
+                            x_pred = single_pred
                         if len(x_pred) == k_neighbors:
                             return x_pred
                 else:
                     single_pred = KnnClassifier.get_prediction(X, node.right_child, k_neighbors, x_pred)
                     if single_pred != None:
-                        x_pred += single_pred
+                        x_pred = single_pred
                     if len(x_pred) == k_neighbors:
                         return x_pred
                     else:
                         single_pred = KnnClassifier.get_prediction(X, node.right_child, k_neighbors, x_pred)
                         if single_pred != None:
-                            x_pred += single_pred
+                            x_pred = single_pred
                         if len(x_pred) == k_neighbors:
                             return x_pred
             else:
                 for data_p in node.data_y:
+                    if len(x_pred) >= k_neighbors:
+                        break
                     if data_p != None:
                         x_pred.append(data_p)
-                    if x_pred == k_neighbors:
-                        return x_pred
                 return x_pred
                         
         
