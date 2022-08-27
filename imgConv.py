@@ -1,5 +1,6 @@
 import cv2
-# from keras.datasets import mnist
+from keras.datasets import mnist
+
 
 def getImageAsArray(path):
 

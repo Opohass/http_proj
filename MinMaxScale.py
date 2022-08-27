@@ -1,4 +1,5 @@
 from pandas.api.types import is_numeric_dtype
+import pandas as pd
 
 class MinMaxScale:
     def __init__(self) -> None:
@@ -6,7 +7,8 @@ class MinMaxScale:
         self.X_max=None
 
     def fit(self,x):
-        x.replace({False: 0, True: 1}, inplace=True) #converting any boolean column to numerical
+        if isinstance(x, pd.DataFrame):
+            x.replace({False: 0, True: 1}, inplace=True) #converting any boolean column to numerical
         #checking if all the features are numerical
         for i in x:
             if not is_numeric_dtype(x[i]):
@@ -19,7 +21,8 @@ class MinMaxScale:
         if self.X_min is None or self.X_max is None:
             raise TypeError("model was not fitted before transformation")
 
-        x.replace({False: 0, True: 1}, inplace=True) #converting any boolean column to numerical
+        if isinstance(x, pd.DataFrame):
+            x.replace({False: 0, True: 1}, inplace=True) #converting any boolean column to numerical
         X_std = (x-self.X_min)/(self.X_max-self.X_min)
         
         #if both max and min of a column are 0 then it would devide by 0 and will return nan.

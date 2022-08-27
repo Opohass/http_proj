@@ -1,5 +1,6 @@
 from sqlite3 import DatabaseError
 import mysql.connector
+import pickle
 
 
 class dataBase:
@@ -56,6 +57,15 @@ class dataBase:
     def getUser(self,userName):
         self.coursor.execute("SELECT * FROM `users` WHERE `userName`=(%s)",(userName,))
         return self.coursor.fetchone()
+    
+    def import_model(self, model_name):
+        self.coursor.execute("SELECT * FROM `models` WHERE `model_name`=(%s)",(model_name,))
+        return self.coursor.fetchone()[-1]
+    
+    def export_model(self, model_name, pickled):
+        self.coursor.execute("INSERT INTO `models` (model_name,pickle) VALUES (%s,%s)",(model_name,pickled,))
+        self.db.commit()
+        
 
 #TESTS
 # b=dataBase()
